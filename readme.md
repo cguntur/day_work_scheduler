@@ -10,5 +10,5 @@
 
 ## [View the website here](https://cguntur.github.io/day_work_scheduler/)
 
-<img src="./images/pwd_generator.png" alt="Password Generator Site Screenshot" width="400"/>
+<img src="./images/work_day_calendar.png" alt="Password Generator Site Screenshot" width="400"/>
 
