@@ -32,8 +32,11 @@ $(function () {
     // attribute of each time-block be used to conditionally add or remove the
     // past, present, and future classes? How can Day.js be used to get the
     // current hour in 24-hour time?
+    var today = dayjs().format('ddd, MMM DD YYYY');
     var currentHour = dayjs().hour();
-    console.log("Current Hour: " + currentHour);
+    console.log(currentHour);
+
+    var currentDayEl = document.getElementById("currentDay");
 
     var currentTimeBlock = document.getElementById("hour-"+currentHour);
 
@@ -45,61 +48,45 @@ $(function () {
 
     var calendarEvents = JSON.parse(localStorage.getItem('calendarEvents')) || [];
 
-    console.log(calendarEvents);
-
-    //Object.entries(calendarEvents).forEach(([key, calendarEventsValue]) => {
-    //    console.log("Key: " + key);
-    //    Object.entries(calendarEventsValue).forEach(([key, value]) => {
-    //        console.log("Key 2: " + key)
-    //        console.log("Value: " + value);
-    //    });
-        
-    //});
-
-    Object.entries(calendarEvents).forEach(([key, value]) => {
-        console.log(value);
-        console.log("Hour: " + value.hour); 
-        console.log(value.eventDesc);
-    });
-
-
-
-    //console.log(timeBlockEl);
     Object.entries(timeBlockEl).forEach(([key, value]) => {
         var timeBlockId = value.id;
-        //console.log("Id: " + timeBlockId);
         var timeBlockHour = timeBlockId.substring(7,5);
-        //console.log(timeBlockHour);
+
+        Object.entries(calendarEvents).forEach(([key, value]) => {
+            if(value.hour == timeBlockHour){
+                
+                var calendarHour = document.getElementById("hour-"+timeBlockHour);
+                document.querySelector("#hour-"+timeBlockHour +" > .description").value = value.value;
+            }
+        });
 
         if(timeBlockHour > currentHour){
-            //console.log("Time Block Hour: " + timeBlockHour + " is greater than " + currentHour);
             value.classList.remove("past");
             value.classList.add("future");
             value.classList.remove("present");
         }else if(timeBlockHour < currentHour){
-            //console.log("Time Block Hour: " + timeBlockHour + " is less than " + currentHour);
             value.classList.add("past");
             value.classList.remove("future");
             value.classList.remove("present");
         }else{
-            //console.log("Time Block Hour: " + timeBlockHour + " is equal to " + currentHour);
             value.classList.remove("past");
             value.classList.remove("future");
             value.classList.add("present");
         }
     });
-
+    
+    //
+    // TODO: Add code to get any user input that was saved in localStorage and set
+    // the values of the corresponding textarea elements. HINT: How can the id
+    // attribute of each time-block be used to do this?
+    //
     saveButton.forEach(function(button){
         button.addEventListener("click", function(){
-            console.log("Parent ID: " + this.parentNode.id);
             var parentId = this.parentNode.id;
             var parentEl = document.querySelector("#"+parentId);
             var parentHour = parentId.substring(7,5);
-            console.log("Parent Hour: " + parentHour);
-            console.log(parentEl);
             var textAreaEl = parentEl.querySelector('.description');
             var task = textAreaEl.value;
-            console.log("Text area content: " + textAreaEl.value);
             var calendarEvent = [];
 
             var obj = calendarEvents.find(function(entry) { 
@@ -108,22 +95,15 @@ $(function () {
             if (obj) {
                 obj.value = task;
             } else {
-                calendarEvents.push({hour: parentHour, eventDesc: task});
+                calendarEvents.push({hour: parentHour, value: task});
             }
         
-            console.log(JSON.stringify(calendarEvents))
-            
             localStorage.setItem("calendarEvents", JSON.stringify(calendarEvents));
 
         });
     });
 
-    
-    //
-    // TODO: Add code to get any user input that was saved in localStorage and set
-    // the values of the corresponding textarea elements. HINT: How can the id
-    // attribute of each time-block be used to do this?
-    //
     // TODO: Add code to display the current date in the header of the page.
+    currentDayEl.textContent = today;
   });
   
